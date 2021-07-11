@@ -1,8 +1,8 @@
 const { Client } = require('../models')
 module.exports = {
-    verifClient(mail,pass) {
-
-        var x= User.count({
+    async verifClient(mail,pass) {
+        var flag = false
+        var count= Client.count({
         where: {
           
             email: mail,
@@ -10,9 +10,12 @@ module.exports = {
           
         }
       });
-      return x
+      if(count != 0){
+          flag = true
+      }
+      return flag
     },
-    getClientByEmail(email) { 
+    async getClientByEmail(email) { 
         return await Client.findOne({
             where: {       
             email 
@@ -20,8 +23,8 @@ module.exports = {
             attributes: ['id', 'phone', 'email', 'role']
         });
         },
-    addClient(client) { 
-        const created = await client.create({phone: client.phone, email: client.email,
+    async addClient(client) { 
+        const created = await Client.create({phone: client.phone, email: client.email,
             password: client.password, role: client.role,
             createdAt : moment().format("YYYY/MM/DD h:mm:ss"),
             updatedAt : moment().format("YYYY/MM/DD h:mm:ss"),
@@ -35,12 +38,11 @@ module.exports = {
         }
         return data
     },
-    updateClient(client) {
+    async updateClient(client) {
         const __client = await this.getClientByEmail(client.email)
-        console.log(__client)
         if (__client == null) return "can't update client"
         try{
-        const updated = await client.update(client, {
+        const updated = await Client.update(client, {
             where: {
             id: __client.id
             }
@@ -51,8 +53,8 @@ module.exports = {
         return "can't update this client"
         }
     },
-    deleteClient(id) { 
-        return await client.destroy({
+    async deleteClient(id) { 
+        return await Client.destroy({
             where: {
             id:id
             },
