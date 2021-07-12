@@ -1,19 +1,30 @@
 const { Client } = require('../models')
-module.exports = {
-    async verifClient(mail,pass) {
-        var flag = false
+const moment = require('moment')
+var CryptoJS = require("crypto-js");
+module.exports = { 
+    async verifClient(clt) {
         var count= Client.count({
         where: {
           
-            email: mail,
-            password: pass 
+            email: clt.email,
+            password: clt.password 
           
         }
       });
       if(count != 0){
-          flag = true
+        const __client = await this.getClientByEmail(clt.email)
+        let data = {}
+        if (__client != null){
+            var encrypted = CryptoJS.HmacSHA1(clt.pass, "SuckMyDick");
+            var token = encrypted.toString()
+            data.id = __client.id
+            data.email = __client.email
+            data.token = token
+            data.role = __client.role
+            return data
+        }
       }
-      return flag
+      return null
     },
     async getClientByEmail(email) { 
         return await Client.findOne({
@@ -53,13 +64,45 @@ module.exports = {
         return "can't update this client"
         }
     },
-    async deleteClient(id) { 
-        return await Client.destroy({
+    async changepass(client) {
+        var count= Client.count({
             where: {
-            id:id
+              
+                email: client.email,
+                password: client.oldpassword 
+              
+            }
+          });
+        if(count != 0){
+            const __client = await this.getClientByEmail(client.email)
+            if (__client == null) return "can't update client"
+            let newClt = {}
+            newClt.password = client.newpassword
+            try{
+            const updated = await Client.update(client, {
+                where: {
+                id: __client.id
+                }
+            });
+            if (updated == 1) return client;
+            else throw new Error()
+            } catch(error){
+            return "can't update this client"
+            }
+        }else{
+            return "wrong password"
+        }
+    },
+    async deleteClient(email) {
+        const __client = await this.getClientByEmail(email)
+        if (__client == null) return "client not found"
+        await Client.destroy({
+            where: {
+            id:__client.id
             },
             attributes:['id', 'phone', 'email', 'role']
         });
+        return __client;
     },
 
 }
