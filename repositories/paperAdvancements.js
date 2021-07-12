@@ -38,10 +38,10 @@ module.exports = {
         const updated = await PaperAdvancement.update(paperAdv, {
             where: {
                 EntrepriseId : paperAdv.EntrepriseId,
-                paperId : paperAdv.paperId
+                PaperId : paperAdv.PaperId
             }
         });
-        if (updated == 1) return client;
+        if (updated) return paperAdv;
         else throw new Error()
         } catch(error){
         return "can't update this PaperAdvancement"
@@ -55,5 +55,5 @@ module.exports = {
             attributes:['EntrepriseId', 'paperId', 'advancement']
         });
     },
-
+    
 }
