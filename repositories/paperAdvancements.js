@@ -1,8 +1,26 @@
 const { PaperAdvancement } = require('../models')
+const { Paper } = require('../models')
+const { Entreprise } = require('../models')
+const moment = require('moment')
 module.exports = {
-
+    async getMypaper(Cid) {
+        let __ents = await Entreprise.findOne({
+            where: {
+                ClientId : Cid
+            },
+            attributes: ['id']
+        });
+        const __idEnt = __ents.id
+        return PaperAdvancement.findAll({
+            attributes: ['advancement'],
+            include: { model: Paper,attributes: ["type"]},
+            where: {
+                EntrepriseId : __idEnt,
+            }
+          });
+      },
     async addPaperAdv(paperAdv) { 
-        const created = await PaperAdvancement.create({EntrepriseId: paperAdv.EntrepriseId, paperId : paperAdv.paperId,
+        const created = await PaperAdvancement.create({EntrepriseId: paperAdv.EntrepriseId, PaperId : paperAdv.paperId,
             advancement: paperAdv.advancement,
             createdAt : moment().format("YYYY/MM/DD h:mm:ss"),
             updatedAt : moment().format("YYYY/MM/DD h:mm:ss"),

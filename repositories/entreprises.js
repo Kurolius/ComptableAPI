@@ -1,4 +1,6 @@
 const { Entreprise } = require('../models')
+const { PaperAdvancement } = require('../models')
+const paperAdv = require('../repositories/paperAdvancements')
 const moment = require('moment')
 module.exports = {
 
@@ -46,17 +48,17 @@ module.exports = {
         });
         let data = {}
         if (created != null){
-        data.id = created.id
-        data.nomE =  created.nomE
-        data.typeE = created.typeE
-        data.nbrAssocies = created.nbrAssocies
-        data.listWithNomAndPathCin = created.listWithNomAndPathCin
-        data.listGerant = created.listGerant
-        data.sectActi = created.sectActi
-        data.capital = created.capital
-        data.validationComptable = created.validationComptable
-        data.ClientId = created.ClientId
-
+            data.id = created.id
+            data.nomE =  created.nomE
+            data.typeE = created.typeE
+            data.nbrAssocies = created.nbrAssocies
+            data.listWithNomAndPathCin = created.listWithNomAndPathCin
+            data.listGerant = created.listGerant
+            data.sectActi = created.sectActi
+            data.capital = created.capital
+            data.validationComptable = created.validationComptable
+            data.ClientId = created.ClientId
+            
         }
         return data
     },
@@ -112,7 +114,31 @@ module.exports = {
         let entreprise ={}
         entreprise.validationComptable = "valide"
         entreprise.ClientId = ClientId
-        return(this.updateEnt(entreprise))
+        const __rep = this.updateEnt(entreprise)
+        var  count= await PaperAdvancement.count({
+            where: {
+              
+                EntrepriseId: ClientId,
+              
+            }
+          });
+        if(count == 0){
+            try{
+                const __entreprise = await this.getMyEnt(ClientId)
+                var __paperAdv = {}
+                __paperAdv.EntrepriseId = __entreprise.id
+                __paperAdv.advancement = "en cours"
+                console.log("ok")
+                for(i = 1; i <= 9; i++){
+                    __paperAdv.paperId = i
+                    paperAdv.addPaperAdv(__paperAdv) 
+                   
+                }
+            } catch(error){
+                return "there is a problem please contact an admin"
+            }
+        }
+        return(__rep)
     }
 
 }

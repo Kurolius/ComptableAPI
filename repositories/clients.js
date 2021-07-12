@@ -3,7 +3,7 @@ const moment = require('moment')
 var CryptoJS = require("crypto-js");
 module.exports = { 
     async verifClient(clt) {
-        var count= Client.count({
+        var count= await Client.count({
         where: {
           
             email: clt.email,
@@ -65,7 +65,7 @@ module.exports = {
         }
     },
     async changepass(client) {
-        var count= Client.count({
+        var count= await Client.count({
             where: {
               
                 email: client.email,
