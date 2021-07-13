@@ -15,7 +15,7 @@ module.exports = {
         const __client = await this.getClientByEmail(clt.email)
         let data = {}
         if (__client != null){
-            var encrypted = CryptoJS.HmacSHA1(clt.pass, "SuckMyDick");
+            var encrypted = CryptoJS.AES.encrypt("Message", "SuckMyDick");
             var token = encrypted.toString()
             data.id = __client.id
             data.email = __client.email
@@ -104,5 +104,20 @@ module.exports = {
         });
         return __client;
     },
+    verifToken(idc,token){
+        const  decrypted = CryptoJS.AES.decrypt(token, "SuckMyDick");
+        var count= await Client.count({
+            where: {
+              
+                id: idc,
+                password: decrypted.toString() 
+              
+            }
+          });
+          if(count != 0){
+              return true
+          }
+          return false
+    }
 
 }

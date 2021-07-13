@@ -36,8 +36,15 @@ router.post('/signup', async function(req, res, next) {
   });
 
   router.delete('/delete', async function(req, res, next){
+    const id = req.body.id
+    const token = req.body.token
+    const flag = await clientsRepo.verifToken(id,token)
+    if(flag){
     let client= req.body.email
     res.send(await clientsRepo.deleteClient(client));
+    }else{
+      res.send("authentification error")
+    }
   })
 
 module.exports = router;
