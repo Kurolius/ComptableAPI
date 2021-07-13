@@ -1,13 +1,15 @@
 const { Client } = require('../models')
 const moment = require('moment')
 var CryptoJS = require("crypto-js");
+var md5 = require('md5');
 module.exports = { 
     async verifClient(clt) {
+       
         var count= await Client.count({
         where: {
           
             email: clt.email,
-            password: clt.password 
+            password: md5(clt.password)
           
         }
       });
@@ -15,8 +17,7 @@ module.exports = {
         const __client = await this.getClientByEmail(clt.email)
         let data = {}
         if (__client != null){
-            var encrypted = CryptoJS.AES.encrypt("Message", "SuckMyDick");
-            var token = encrypted.toString()
+            var token = CryptoJS.AES.encrypt(md5(clt.password), 'SuckMyDick').toString();
             data.id = __client.id
             data.email = __client.email
             data.token = token
@@ -34,9 +35,9 @@ module.exports = {
             attributes: ['id', 'phone', 'email', 'role']
         });
         },
-    async addClient(client) { 
+    async addClient(client) {
         const created = await Client.create({phone: client.phone, email: client.email,
-            password: client.password, role: client.role,
+            password: md5(client.password), role: client.role,
             createdAt : moment().format("YYYY/MM/DD h:mm:ss"),
             updatedAt : moment().format("YYYY/MM/DD h:mm:ss"),
         });
@@ -69,7 +70,7 @@ module.exports = {
             where: {
               
                 email: client.email,
-                password: client.oldpassword 
+                password: md5(client.oldpassword)  
               
             }
           });
@@ -77,7 +78,7 @@ module.exports = {
             const __client = await this.getClientByEmail(client.email)
             if (__client == null) return "can't update client"
             let newClt = {}
-            newClt.password = client.newpassword
+            newClt.password = md5(client.newpassword) 
             try{
             const updated = await Client.update(client, {
                 where: {
@@ -104,13 +105,14 @@ module.exports = {
         });
         return __client;
     },
-    verifToken(idc,token){
-        const  decrypted = CryptoJS.AES.decrypt(token, "SuckMyDick");
+    async verifToken(idc,token){
+        var bytes  = CryptoJS.AES.decrypt(token, 'SuckMyDick');
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
         var count= await Client.count({
             where: {
               
                 id: idc,
-                password: decrypted.toString() 
+                password: originalText 
               
             }
           });
