@@ -10,8 +10,15 @@ router.get('/:id', async function(req, res, next) {
     res.send(await entreprisesRepo.getMyEnt(req.params.id));
 });
 
-router.get('/valide/:id', async function(req, res, next) {
-    res.send(await entreprisesRepo.ValideENT(req.params.id));
+router.post('/valide', async function(req, res, next) {
+  const id = req.body.id
+  const token = req.body.token
+  const flag = await clientsRepo.verifToken(id,token)
+  if(flag){
+    res.send(await entreprisesRepo.ValideENT(req.body.id));
+  }else{
+    res.send("authentification error")
+  }
 });
 
 router.post('/create', async function(req, res, next) {

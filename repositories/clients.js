@@ -43,12 +43,9 @@ module.exports = {
         });
         let data = {}
         if (created != null){
-        data.id = created.id
-        data.phone =  created.phone
-        data.email = created.email
-        data.role = created.role
+            return this.verifClient(client)
         }
-        return data
+        return "error"
     },
     async updateClient(client) {
         const __client = await this.getClientByEmail(client.email)

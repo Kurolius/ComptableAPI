@@ -5,7 +5,7 @@ const clientsRepo = require('../repositories/clients')
 router.get('/:id', async function(req, res, next) {
     res.send(await paperAdvRepo.getMypaper(req.params.id))
 });
-router.post('/update', async function(req, res, next) {
+router.put('/update', async function(req, res, next) {
     const id = req.body.id
     const token = req.body.token
     const flag = await clientsRepo.verifToken(id,token)
