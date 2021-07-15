@@ -114,11 +114,12 @@ module.exports = {
         let entreprise ={}
         entreprise.validationComptable = "valide"
         entreprise.ClientId = ClientId
+        const __ent = await this.getMyEnt(ClientId)
         const __rep = this.updateEnt(entreprise)
         var  count= await PaperAdvancement.count({
             where: {
               
-                EntrepriseId: ClientId,
+                EntrepriseId: __ent.id,
               
             }
           });
