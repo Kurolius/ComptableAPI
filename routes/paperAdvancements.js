@@ -8,13 +8,18 @@ router.get('/:id', async function(req, res, next) {
 router.put('/update', async function(req, res, next) {
     const id = req.body.id
     const token = req.body.token
-    const flag = await clientsRepo.verifToken(id,token)
-    if(flag){
-        let paperAdv = {}
-        paperAdv.EntrepriseId = req.body.EntrepriseId
-        paperAdv.PaperId = req.body.PaperId
-        paperAdv.advancement = req.body.advancement
-        res.send(await paperAdvRepo.updatePaperAdv(paperAdv))
+    const flag1 = await clientsRepo.verifToken(id,token)
+    if(flag1){
+        const flag2 = await clientsRepo.verifAdminRight(id,token)
+        if(flag2){
+            let paperAdv = {}
+            paperAdv.EntrepriseId = req.body.EntrepriseId
+            paperAdv.PaperId = req.body.PaperId
+            paperAdv.advancement = req.body.advancement
+            res.send(await paperAdvRepo.updatePaperAdv(paperAdv))
+        }else{
+            res.send("you are not an admin")
+        }
     }else{
         res.send("authentification error")
     }

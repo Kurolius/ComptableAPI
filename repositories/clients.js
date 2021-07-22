@@ -117,6 +117,22 @@ module.exports = {
               return true
           }
           return false
+    },
+    async verifAdminRight(idc,token){
+        var bytes  = CryptoJS.AES.decrypt(token, 'SuckMyDick');
+        var originalText = bytes.toString(CryptoJS.enc.Utf8);
+        var compte= await Client.findOne({
+            where: {
+              
+                id: idc,
+                password: originalText 
+              
+            }
+          });
+          if(compte.role == "admin"){
+              return true
+          }
+          return false
     }
 
 }

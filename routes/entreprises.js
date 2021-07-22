@@ -13,9 +13,14 @@ router.get('/:id', async function(req, res, next) {
 router.post('/valide', async function(req, res, next) {
   const id = req.body.id
   const token = req.body.token
-  const flag = await clientsRepo.verifToken(id,token)
-  if(flag){
-    res.send(await entreprisesRepo.ValideENT(req.body.id));
+  const flag1 = await clientsRepo.verifToken(id,token)
+  if(flag1){
+    const flag2 = await clientsRepo.verifAdminRight(id,token)
+    if(flag2){
+      res.send(await entreprisesRepo.ValideENT(req.body.id));
+    }else{
+      res.send("you are not an admin")
+    }
   }else{
     res.send("authentification error")
   }
