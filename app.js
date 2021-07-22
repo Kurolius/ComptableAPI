@@ -21,4 +21,6 @@ app.use('/clients', clientsRouter);
 app.use('/entreprises', entreprisesRouter);
 app.use('/paperAdvancements', paperAdvRouter);
 
+app.use(express.static(__dirname + '/public'));
+app.use('/CinImg', express.static('CinImg'));
 module.exports = app;

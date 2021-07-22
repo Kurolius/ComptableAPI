@@ -1,6 +1,17 @@
 const router = require('express').Router();
 const entreprisesRepo = require('../repositories/entreprises')
 const clientsRepo = require('../repositories/clients')
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, './CinImg');
+    },
+  filename: function (req, file, cb) {
+      cb(null, file.originalname);
+  }
+});
+const upload = multer({storage: storage});
 
 router.get('/', async function(req, res, next) {
     res.send(await entreprisesRepo.getAllEnts());
@@ -26,7 +37,7 @@ router.post('/valide', async function(req, res, next) {
   }
 });
 
-router.post('/create', async function(req, res, next) {
+router.post('/create',async function(req, res, next) {
   const id = req.body.id
   const token = req.body.token
   const flag = await clientsRepo.verifToken(id,token)
@@ -45,6 +56,14 @@ router.post('/create', async function(req, res, next) {
   }else{
     res.send("authentification error")
   }
+  });
+
+  router.post('/addCinImg',upload.single('CinImg'),async function(req, res, next) {
+    console.log(JSON.stringify(req.file))
+    var response = '<a href="/">Home</a><br>'
+    response += "Files uploaded successfully.<br>"
+    response += `<img src="${req.file.path}" /><br>`
+    return res.send(response)
   });
 
   router.put('/update', async function(req, res, next) {
