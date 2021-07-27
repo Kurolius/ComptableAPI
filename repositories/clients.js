@@ -35,6 +35,14 @@ module.exports = {
             attributes: ['id', 'phone', 'email', 'role']
         });
         },
+        async getClientdata(cid) { 
+            return await Client.findOne({
+                where: {       
+                id:cid 
+                },
+                attributes: ['id', 'phone', 'email', 'role','createdAt','updatedAt']
+            });
+            },
     async addClient(client) {
         const created = await Client.create({phone: client.phone, email: client.email,
             password: md5(client.password), role: client.role,

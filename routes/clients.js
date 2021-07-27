@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const clientsRepo = require('../repositories/clients')
 
+router.get('/:id', async function(req, res, next) {
+  res.send(await clientsRepo.getClientdata(req.params.id));
+});
 
 router.post('/signup', async function(req, res, next) {
     let client = {}
