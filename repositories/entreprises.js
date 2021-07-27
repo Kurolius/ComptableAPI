@@ -23,9 +23,10 @@ module.exports = {
         },
         attributes: ['id', 'nomE', 'typeE', 'nbrAssocies','listWithNomAndPathCin','listGerant','sectActi', 'capital', 'validationComptable']
         });
-        __ents.listWithNomAndPathCin =__ents.listWithNomAndPathCin.toString().split(";")
-        __ents.listGerant =__ents.listGerant.toString().split(";")
-       
+        if(__ents){
+            __ents.listWithNomAndPathCin =__ents.listWithNomAndPathCin.toString().split(";")
+            __ents.listGerant =__ents.listGerant.toString().split(";")
+        }
         return __ents
       },
     async addEnt(entreprise) {

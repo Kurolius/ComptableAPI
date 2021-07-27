@@ -10,14 +10,18 @@ module.exports = {
             },
             attributes: ['id']
         });
+        if(__ents){
         const __idEnt = __ents.id
-        return PaperAdvancement.findAll({
+        return await PaperAdvancement.findAll({
             attributes: ['advancement'],
             include: { model: Paper,attributes: ["type"]},
             where: {
                 EntrepriseId : __idEnt,
             }
           });
+        }else{
+            return "Client id not found";
+        }
       },
     async addPaperAdv(paperAdv) { 
         const created = await PaperAdvancement.create({EntrepriseId: paperAdv.EntrepriseId, PaperId : paperAdv.paperId,
